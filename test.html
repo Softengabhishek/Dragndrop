@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- <div class="container">
+        <img src="./smartmockups_lhi2mra5.jpg" alt="image">
+        <img src="./smartmockups_lhi2mra5.jpg" alt="image">
+        <img src="./smartmockups_lhi2mra5.jpg" alt="image">
+        <img src="./smartmockups_lhi2mra5.jpg" alt="image">
+        <img src="./smartmockups_lhi2mra5.jpg" alt="image">
+        <img src="./smartmockups_lhi2mra5.jpg" alt="image">
+        <img src="./smartmockups_lhi2mra5.jpg" alt="image">
+    </div> -->
+    <img src="./smartmockups_lhi2mra5.jpg" class="hero" alt="image">
+    <div class="draglist"></div>
+    <style>
+        .conatiner{
+            width: 50%;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+        img{
+            width: 100px;
+            height: 100px;
+        }
+        .draglist{
+            width: 300px;
+            height: 500px;
+            border: 2px solid red;
+        }
+    </style>
+    <script>
+        var itemList = document.getElementsByClassName("container");
+        async function fetchData(){
+        const url = 'https://planets-info-by-newbapi.p.rapidapi.com/api/v1/planets/';
+        const options = {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Key': '51513f6df7msh1caf28a9d409faep1d6ef5jsnbc2fd995c05d',
+                'X-RapidAPI-Host': 'planets-info-by-newbapi.p.rapidapi.com'
+            }
+        };
+        
+        try {
+            const response = await fetch(url, options);
+            const result = await response.json();
+            result.map((data)=>{
+                const {imgSrc}= data
+                const image = Object.values(imgSrc)[0];
+                const img = document.createElement("img");
+                img.src = image
+                img.style.width= "100px"
+                img.style.height= "100px"
+                itemList[0].appendChild(img)
+    
+            })
+    
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    // fetchData() 
+        // var lists = document.querySelectorAll("img")
+        let lists= document.getElementsByClassName("hero")
+        console.log(lists)
+    
+        for(e of lists){
+            e.addEventListener("dragstart", (event)=>{
+            event.preventDefault(); //preventing from default behaviour
+            console.log(event.target)
+            event.dataTransfer.setData("data",event.target)
+            console.log("dragstart is triggered")
+        });
+        var draglist = document.getElementsByClassName("draglist")[0]
+        console.log(draglist)
+        draglist.addEventListener("dragover",(e)=>{
+            e.preventDefault(); 
+            // let data = e.dataTransfer.getData("data")
+            // draglist.appendChild(data)
+            console.log("triggered..")
+        })
+        draglist.addEventListener("drop",(e)=>{
+            e.preventDefault(); 
+            let data = e.dataTransfer.getData("data")
+            console.log(e.dataTransfer.getData("data"))
+            draglist.appendChild(data)
+            console.log("triggered..")
+        })
+        }
+        
+    </script>
+</body>
+
+</html>
