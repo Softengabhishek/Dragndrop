@@ -1,69 +1,72 @@
-const itemList = document.getElementsByClassName("item_list")
+const itemList = document.getElementsByClassName("item_list")[0]
+const imgList = document.querySelectorAll('.list');
+const dragArea = document.querySelector(".drag-area");
+const btn = document.getElementById("btn")
+const header = document.getElementsByClassName("header-drag")[0]
 
-
-// Get the image data using this api
-async function fetchData(){
-    const url = 'https://planets-info-by-newbapi.p.rapidapi.com/api/v1/planets/';
-    const options = {
-        method: 'GET',
-        headers: {
-            'X-RapidAPI-Key': '51513f6df7msh1caf28a9d409faep1d6ef5jsnbc2fd995c05d',
-            'X-RapidAPI-Host': 'planets-info-by-newbapi.p.rapidapi.com'
-        }
-    };
-    
-    try {
-        const response = await fetch(url, options);
-        const result = await response.json();
-        result.map((data)=>{
-            let {imgSrc}= data
-            let image = Object.values(imgSrc)[0];
-            let img = document.createElement("img");
-            img.src = image
-            itemList[0].appendChild(img)
-
+// Drag and Drop logics 
+imgList.forEach((list) => {
+    list.addEventListener("dragstart", (e) => {
+        let imgid = e.target;
+        console.log(imgid)
+        dragArea.addEventListener("dragover", (e) => {
+            e.preventDefault()
+            header.innerText = "Leave file over here "
         })
 
-    } catch (error) {
-        console.error(error);
+        dragArea.addEventListener("dragleave", (e) => {
+            e.preventDefault()
+            header.innerText = "Drag & Drop to Upload file"
+        })
+
+        // Drop event over the drag area
+        dragArea.addEventListener("drop", (e) => {
+            let count = 0
+            while (count <= 3) {
+                if (!dragArea.children[count].classList.contains("hide"))
+                    dragArea.children[count].classList.add("hide");
+                count++
+            }
+            dragArea.classList.add("drag-area-after")
+            console.log(imgid)
+            dragArea.appendChild(imgid)
+            imgid=null
+        })
+
+        itemList.addEventListener("dragover", (e) => {
+            e.preventDefault()
+        })
+
+        itemList.addEventListener("drop", (e) => {
+            let i = dragArea.children.length
+            if (i == 4) {
+                while (i--)
+                    dragArea.children[i].classList.remove("hide");
+            }
+            itemList.appendChild(imgid)
+            imgid=null
+        })
+    })
+});
+
+
+
+// Reset button logic here
+const container = document.getElementsByClassName("container")[0]
+btn.addEventListener("click", (e) => {
+    container.removeChild(itemList)
+    let leftBox = document.createElement("div")
+    container.insertBefore(leftBox, dragArea)
+    leftBox.className = "item_list"
+    imgList.forEach((ele) => {
+        leftBox.appendChild(ele)
+    })
+    let count = 0
+    while (count <= 3) {
+        if (dragArea.children[count].classList.contains("hide"))
+            dragArea.children[count].classList.remove("hide");
+        count++
     }
-}
-// fetchData()
-
-
-const imgList = document.querySelectorAll(".list");
-const dragArea = document.querySelector(".drag-area");
-console.log(imgList);
-
-imgList.forEach((list)=>{
-    console.log("working..")
-    list.addEventListener("dragstart",(e)=>{
-        e.preventDefault()
-        e.dataTransfer.setData("data",e.target)        
-        console.log("dragstart")
-    })
+    dragArea.classList.remove("drag-area-after")
+    header.innerText = "Drag & Drop to Upload file"
 })
-
-
-
-for(list of imgList){
-    
-    list.addEventListener("dragstart",(e)=>{
-        e.preventDefault()
-
-    })
-}
-
-dragArea.addEventListener("dragover",(e)=>{
-    e.preventDefault()
-    console.log("drag over is triggered")
-})
-dragArea.addEventListener("drop",(e)=>{
-    e.preventDefault()
-    let data = e.dataTransfer.getData("data")
-    console.log(data)
-    // dragArea.appendChild(data)
-
-    console.log("Drop is triggered",data)
-})
-
